@@ -1,0 +1,1 @@
+makeblastdb -in ref/hhv5.fasta -dbtype nucl -out blastdb/hhv   
