@@ -9,8 +9,3 @@ do
     makeblastdb -in ./ref/${basefile}.fasta -dbtype nucl -out ./blastdb/${basefile}
 
 done
-
-
-
-
-tblastn --help
