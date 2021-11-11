@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 # input: name of virus i.e. hhv5
+# output: iedb csv file with ref_start and ref_end columns appended per peptide
+# usage: Rscript main.R hhv5
 
 args = commandArgs(trailingOnly=TRUE)
 
