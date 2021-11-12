@@ -1,16 +1,19 @@
 #!/usr/bin/env Rscript
-# input: name of virus i.e. hhv5
+# input: name of virus i.e. hhv5 , iedb filename
 # output: iedb csv file with ref_start and ref_end columns appended per peptide
-# usage: Rscript main.R hhv5
+# usage: Rscript main.R hhv5 data/hhv5_bcell.csv
 
 args = commandArgs(trailingOnly=TRUE)
 
 print(paste0("###############################   ", args[1], "   ###############################" ))
 
+# the reference strain
+ref = paste0(args[1])
 # the iedb file
-file = paste0("data/",args[1], ".csv")
-df = read.csv(file , skip = 1)
-df = df[df$Object.Type == "Linear peptide",] # data is pretty poorfly formatted, lets just deal with linear for now
+file_iedb = paste0(args[2])
+
+df = read.csv(file_iedb , skip = 1)
+df = df[df$Object.Type == "Linear peptide",] # data is pretty poorly formatted, lets just deal with linear for now
 df$ref_start_pos = 0
 df$ref_end_pos = 0
 
@@ -23,8 +26,9 @@ for(i in 1:length(df$Description)){
     print(text)
 
     # pass to tblastn
-    command = paste0("tblastn -db blastdb/hhv5 -query del.fasta -outfmt 6")
+    command = paste0("tblastn -db blastdb/", ref ," -query del.fasta -outfmt 6")
     blast = system(command, intern = T)
+    print(blast)
 
     # handle output
     if(length(blast) != 0){ # if = 0 then no match
@@ -40,7 +44,8 @@ for(i in 1:length(df$Description)){
     df$ref_start_pos[i] = start
     df$ref_end_pos[i] = end
 }
-outfile = paste0("data/",args[1], "_ref.csv")
+outfile = paste0(tools::file_path_sans_ext(as.character(args[2])),
+    "_ref.csv")
 write.csv(df,
     outfile,
     row.names = F)
